@@ -1,0 +1,27 @@
+// vision_zero_dashboard
+
+// Step 1: Folder Structure
+
+// Root
+vision-zero-dashboard/
+├── backend/              // Flask API + ML + DB handlers
+│   ├── app.py            // Main Flask app
+│   ├── db.py             // PostgreSQL connection + queries
+│   ├── model.py          // ML model + predictor function
+│   ├── geo_utils.py      // GeoPandas/PostGIS helpers
+│   └── requirements.txt  // Flask, psycopg2, pandas, scikit-learn
+│
+├── frontend/             // React + Vite + Tailwind + Mapbox
+│   ├── public/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   ├── components/   // Charts, Maps, Filters
+│   │   └── services/     // Axios API calls
+│   └── vite.config.js
+│
+├── deploy/
+│   ├── aws_lambda_stop_ec2.py  // Optional: Auto shutdown Lambda
+│   └── README_DEPLOY.md        // Deployment notes for AWS (EC2 + S3)
+│
+└── README.md            // Project overview, setup, purpose
