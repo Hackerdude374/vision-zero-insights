@@ -22,3 +22,11 @@ def filter_crashes_in_bbox(gdf, min_lon, min_lat, max_lon, max_lat):
 # Filter to crashes within a specific borough (assumes borough column exists)
 def filter_by_borough(df, borough_name):
     return df[df['borough'].str.upper() == borough_name.upper()]
+
+#filter by borough coords
+def filter_by_bbox_coords(gdf, bbox_str):
+    try:
+        min_lon, min_lat, max_lon, max_lat = map(float, bbox_str.split(","))
+        return gdf.cx[min_lon:max_lon, min_lat:max_lat]
+    except:
+        return gdf

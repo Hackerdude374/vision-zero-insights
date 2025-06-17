@@ -1,7 +1,9 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-
+import joblib
+import os
+model_file = "model.pkl"
 # In-memory ML model setup
 model = None
 features = ['borough', 'contributing_factor']
@@ -11,6 +13,10 @@ label = 'injury_severity'
 def load_and_train_model():
     global model
     try:
+        if os.path.exists(model_file):
+            model = joblib.load(model_file)
+            print("✅ Loaded pre-trained model")
+            return
         # Load from DB or CSV
         df = pd.read_csv('crash_data_cleaned.csv')
 
@@ -29,6 +35,9 @@ def load_and_train_model():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
         model = RandomForestClassifier()
         model.fit(X_train, y_train)
+        
+        # Save for reuse
+        joblib.dump(model, model_file)
         print("✅ Model trained")
     except Exception as e:
         print("❌ Model training failed:", e)
