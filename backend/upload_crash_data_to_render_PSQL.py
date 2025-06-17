@@ -2,7 +2,7 @@ import psycopg2
 import csv
 
 # Your Render DB URL
-DATABASE_URL = "postgresql://visionzero_db_user:6s2vRfmAsALLhYtZYVegJZUJYi0YZIyI@dpg-d18bhkogjchc73eogai0-a/visionzero_db"
+DATABASE_URL = "postgresql://visionzero_db_user:6s2vRfmAsALLhYtZYVegJZUJYi0YZIyI@dpg-d18bhkogjchc73eogai0-a.oregon-postgres.render.com/visionzero_db"
 
 # Connect to the Render DB
 conn = psycopg2.connect(DATABASE_URL)
