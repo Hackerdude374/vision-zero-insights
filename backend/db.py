@@ -1,8 +1,7 @@
-# db.py
+# backend/db.py
 import psycopg2
 import os
 
-# You can store this in an .env file or Render's Environment settings
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 def get_recent_crashes(limit=100):
@@ -20,10 +19,9 @@ def get_recent_crashes(limit=100):
         cur.execute(query, (limit,))
         rows = cur.fetchall()
         columns = [desc[0] for desc in cur.description]
-        results = [dict(zip(columns, row)) for row in rows]
         cur.close()
         conn.close()
-        return results
+        return [dict(zip(columns, row)) for row in rows]
     except Exception as e:
         print("DB error:", e)
         return []
