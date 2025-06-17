@@ -1,0 +1,6 @@
+# In the backend folder:
+docker build -t visionzero-backend .
+
+docker run -d -p 5000:5000 --name visionzero-api \
+  -e DATABASE_URL="your-db-url" \
+  visionzero-backend
