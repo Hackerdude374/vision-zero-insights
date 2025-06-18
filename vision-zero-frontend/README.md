@@ -1,31 +1,107 @@
+# 💻 Frontend - React + Vite + Mapbox
 
-# Frontend - React + Vite + TailwindCSS + Mapbox
+---
 
-## 🔧 Purpose
-Visualizes NYC crash data on an interactive map and connects to the Flask backend for live data.
+## 🌐 Stack
 
-## 🗂️ Important Files
-- `src/components/CrashMap.jsx`: Displays Mapbox map + crash markers
-- `src/api/crashAPI.js`: Fetches crash data from Flask
-- `App.jsx`: Main app structure
-- `tailwind.config.js`, `postcss.config.js`: Tailwind setup
-- `vite.config.js`: Proxy config for local backend API calls
+- React
+- Vite
+- TailwindCSS
+- Axios
+- Mapbox GL JS
 
-## 🗺️ Mapbox Integration
+---
+
+## 📁 Key Structure
+
+```
+src/
+├── App.jsx
+├── api/
+│   └── crashAPI.js
+├── components/
+│   └── CrashMap.jsx
+```
+
+---
+
+## 🧭 Map Rendering
+
+### CrashMap.jsx
+
 ```jsx
-mapboxgl.accessToken = "your_token";
-const map = new mapboxgl.Map({ ... })
-new mapboxgl.Marker().setLngLat([lng, lat]).addTo(map)
+mapboxgl.accessToken = "YOUR_TOKEN"
+
+useEffect(() => {
+  const map = new mapboxgl.Map({...})
+  fetchCrashData().then(data => {
+    data.forEach(crash => {
+      new mapboxgl.Marker().setLngLat([...])
+    })
+  })
+}, [])
 ```
 
-## 🔁 API Usage
-```javascript
-fetch("/api/crashes")
-  .then(res => res.json())
-  .then(data => console.log(data))
+---
+
+## 🌐 API Integration
+
+### `crashAPI.js`
+
+```js
+export async function fetchCrashData() {
+  const res = await fetch("/api/crashes")
+  return res.json()
+}
 ```
 
-## ✅ Setup Steps
-1. `npm install`
-2. `npm run dev`
-3. Deploy to Vercel for free hosting
+---
+
+## 🎨 Tailwind Setup
+
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+### `index.css`
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'mapbox-gl/dist/mapbox-gl.css';
+```
+
+---
+
+## 🚀 Vercel Deployment
+
+```bash
+vercel login
+vercel deploy
+```
+
+Set `VITE_API_BASE_URL` in `.env` for production proxying if needed.
+
+---
+
+## 🧪 Dev Server
+
+```bash
+npm install
+npm run dev
+```
+
+Runs on: `http://localhost:5173`
+
+---
+
+## 🔥 Live Preview
+
+```bash
+npm run build
+```
+
+Builds production-ready frontend for Vercel

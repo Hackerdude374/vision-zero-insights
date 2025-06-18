@@ -1,31 +1,92 @@
+# 🧠 Backend - Flask + ML + PostGIS API
 
-# Backend - Flask + PostgreSQL + ML
+---
 
-## 🔧 Purpose
-Serves crash data via API and runs an ML model to predict crash severity.
+## 🔧 Stack
 
-## 🗂️ Important Files
-- `app.py`: Main Flask app with API routes like `/api/crashes`
-- `model.py`: Trains and saves the ML model (`model.pkl`)
-- `db.py`: Connects to PostgreSQL using SQLAlchemy
-- `upload_crash_data_to_render_PSQL.py`: Seeds the crash data into the Render PostgreSQL database
-- `render.yaml` and `Procfile`: Used to deploy to Render
+- Flask
+- Gunicorn (for production)
+- psycopg2 (PostgreSQL driver)
+- SQLAlchemy
+- GeoPandas
+- Scikit-Learn
+- Render PostgreSQL
+- PostGIS (for spatial filtering)
 
-## ⚙️ Architecture
+---
+
+## 🔌 Endpoints
+
+### `/api/crashes`
+Returns full or filtered crash data
+
+#### Optional Filters:
+- `borough=MANHATTAN`
+- `bbox=lng1,lat1,lng2,lat2` (bounding box)
+
+```bash
+GET /api/crashes?borough=BRONX
 ```
-client (Vercel) --> API call --> Flask (Render) --> PostgreSQL (Render)
-                                            ↳ model.pkl (ML prediction)
-```
 
-## 🔍 Example Route (Flask)
+---
+
+## 🧠 ML Model
+
+### File: `model.py`
+
 ```python
+from sklearn.linear_model import LogisticRegression
+
+def train_model(data):
+    X = data[["injuries", "borough"]]
+    y = data["severity"]
+    model = LogisticRegression().fit(X, y)
+    return model
+```
+
+---
+
+## 🌐 Flask Setup
+
+### `app.py`
+
+```python
+from flask import Flask
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
 @app.route("/api/crashes")
 def get_crashes():
-    results = db.session.query(Crash).limit(100).all()
-    return jsonify([r.to_dict() for r in results])
+    ...
 ```
 
-## ✅ Setup Steps
-1. Train model: `python model.py`
-2. Upload data: `python upload_crash_data_to_render_PSQL.py`
-3. Deploy to Render using `render.yaml`
+---
+
+## 📂 Other Key Files
+
+- `geo_utils.py`: contains geospatial helpers like bounding box SQL
+- `upload_crash_data_to_render_PSQL.py`: seeds Render DB with crash CSV
+- `db.py`: establishes DB connection using `os.environ['DATABASE_URL']`
+
+---
+
+## 🧪 Local Testing
+
+```bash
+python app.py
+```
+
+- Use Postman or browser to hit `http://localhost:5000/api/crashes`
+
+---
+
+## 🗃️ Render Deployment
+
+- Upload `render.yaml`
+- Set `DATABASE_URL` as env var
+- Use Gunicorn as start command:
+```bash
+gunicorn app:app
+```
