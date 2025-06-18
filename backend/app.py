@@ -68,5 +68,16 @@ def admin_upload():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/crashes/bbox")
+def crashes_bbox():
+    args = request.args
+    min_lon, min_lat, max_lon, max_lat = map(float, [
+        args.get("min_lon"), args.get("min_lat"),
+        args.get("max_lon"), args.get("max_lat")
+    ])
+    data = get_crashes_in_bbox(min_lon, min_lat, max_lon, max_lat)
+    return jsonify(data)
+
+
 if __name__ == "__main__":
     app.run(debug=True)

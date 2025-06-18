@@ -25,3 +25,17 @@ def get_recent_crashes(limit=100):
     except Exception as e:
         print("DB error:", e)
         return []
+
+def get_crashes_in_bbox(min_lon, min_lat, max_lon, max_lat, limit=100):
+    query = """
+        SELECT crash_date, borough, latitude, longitude,
+               number_of_persons_injured, contributing_factor_vehicle_1
+        FROM crash_data
+        WHERE ST_Intersects(
+            geom,
+            ST_MakeEnvelope(%s, %s, %s, %s, 4326)
+        )
+        ORDER BY crash_date DESC
+        LIMIT %s;
+    """
+    ...

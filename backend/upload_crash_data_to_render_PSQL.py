@@ -1,5 +1,6 @@
 import psycopg2
 import csv
+import os
 
 # Your Render DB URL
 DATABASE_URL = "postgresql://visionzero_db_user:6s2vRfmAsALLhYtZYVegJZUJYi0YZIyI@dpg-d18bhkogjchc73eogai0-a.oregon-postgres.render.com/visionzero_db"
@@ -8,7 +9,7 @@ DATABASE_URL = "postgresql://visionzero_db_user:6s2vRfmAsALLhYtZYVegJZUJYi0YZIyI
 conn = psycopg2.connect(DATABASE_URL)
 cur = conn.cursor()
 
-# 1. Create the table if it doesn't exist
+# 1. Create table if not exists
 cur.execute("""
 CREATE TABLE IF NOT EXISTS crash_data (
     crash_date DATE,
@@ -38,8 +39,22 @@ with open("crash_data_cleaned.csv", "r") as f:
             row["contributing_factor_vehicle_1"]
         ))
 
+# 3. Add PostGIS geometry column if not exists
+cur.execute("""
+    ALTER TABLE crash_data 
+    ADD COLUMN IF NOT EXISTS geom geometry(Point, 4326);
+""")
+
+# 4. Populate geom using lon/lat
+cur.execute("""
+    UPDATE crash_data
+    SET geom = ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)
+    WHERE longitude IS NOT NULL AND latitude IS NOT NULL;
+""")
+
+# 5. Commit and close
 conn.commit()
 cur.close()
 conn.close()
 
-print("Upload complete ✅")
+print("✅ Upload + PostGIS geom complete!")
