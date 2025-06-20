@@ -4,6 +4,8 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+require("dotenv").config();
+
 // cronserver/index.js
 console.log("📅 Cronjob server starting...");
 
@@ -11,8 +13,10 @@ const app = express();
 const PORT = 4000;
 
 // Your token set in .env or directly here (MATCH the one Flask checks)
-const ADMIN_TOKEN = "your_token"; // 🔒 Replace with your actual admin token
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 
+// Example: use it in a fetch call
+const apiUrl = `https://vision-zero-insights.onrender.com/api/admin/upload?token=${ADMIN_TOKEN}`;
 // Destination for downloaded CSV file (where your Flask backend expects it)
 const CSV_PATH = path.join(__dirname, '../backend/crash_data_cleaned.csv');
 
