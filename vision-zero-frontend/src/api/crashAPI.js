@@ -1,5 +1,8 @@
+// src/api/crashAPI.js
 export async function fetchCrashData() {
-  const response = await fetch('/api/crashes');
-  if (!response.ok) throw new Error("Network error");
-  return response.json();
+  const res = await fetch("/api/crashes");
+  if (!res.ok) {
+    throw new Error("Failed to fetch crash data");
+  }
+  return res.json();
 }
