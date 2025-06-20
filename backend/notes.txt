@@ -1,0 +1,12 @@
+curl -X POST http://localhost:5000/api/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "borough": "MANHATTAN",
+    "number_of_persons_injured": 2,
+    "contributing_factor_vehicle_1": "Driver Inattention"
+}'
+
+
+^test ML in bash
