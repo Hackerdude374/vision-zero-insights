@@ -4,6 +4,8 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+// cronserver/index.js
+console.log("📅 Cronjob server starting...");
 
 const app = express();
 const PORT = 4000;
