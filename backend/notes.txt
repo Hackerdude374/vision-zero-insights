@@ -10,3 +10,8 @@ curl -X POST http://localhost:5000/api/predict \
 
 
 ^test ML in bash
+
+📦 NYC Open Data Crash Dataset Link (Official Source):
+Motor Vehicle Collisions - Crashes
+📎 https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95
+
