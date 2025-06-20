@@ -15,7 +15,7 @@ def load_and_train_model():
     try:
         if os.path.exists(model_file):
             model = joblib.load(model_file)
-            print("✅ Loaded pre-trained model")
+            print("✅ Loaded pre-trained model (model.py is activated in app.py)")
             return
         # Load from DB or CSV
         df = pd.read_csv('crash_data_cleaned.csv')
@@ -38,7 +38,7 @@ def load_and_train_model():
         
         # Save for reuse
         joblib.dump(model, model_file)
-        print("✅ Model trained")
+        print("✅ Model trained (model.py is activated in app.py")
     except Exception as e:
         print("❌ Model training failed:", e)
 
