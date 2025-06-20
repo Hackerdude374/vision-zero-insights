@@ -32,10 +32,12 @@ def home():
 #         df = pd.DataFrame(gdf.drop(columns="geometry"))
 
 #     return jsonify(df.to_dict(orient="records"))
+
+DATABASEURL = os.getenv('DATABASE_URL')
 @app.route('/api/crashes')
 def get_crashes():
     try:
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = psycopg2.connect(DATABASEURL)
         cur = conn.cursor()
         cur.execute("""
             SELECT crash_date, borough, latitude, longitude,
