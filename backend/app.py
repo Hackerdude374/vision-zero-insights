@@ -3,31 +3,65 @@ from db import get_recent_crashes
 from model import predict_severity
 from flask_cors import CORS
 from geo_utils import make_geodf_from_crash_data, filter_by_bbox_coords
-
+from dotenv import load_dotenv
 from werkzeug.exceptions import Forbidden
 import csv
-
+import psycopg2
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
-@app.route("/api/crashes")
-def crashes():
-    borough = request.args.get("borough")
-    bbox = request.args.get("bbox")
 
-    data = get_recent_crashes(limit=1000)
-    df = pd.DataFrame(data)
+@app.route('/')
+def home():
+    return "✅ Flask backend is alive!"
+# @app.route("/api/crashes")
+# def crashes():
+#     borough = request.args.get("borough")
+#     bbox = request.args.get("bbox")
 
-    if borough:
-        df = filter_by_borough(df, borough)
+#     data = get_recent_crashes(limit=1000)
+#     df = pd.DataFrame(data)
 
-    if bbox:
-        gdf = make_geodf_from_crash_data(df)
-        gdf = filter_by_bbox_coords(gdf, bbox)
-        df = pd.DataFrame(gdf.drop(columns="geometry"))
+#     if borough:
+#         df = filter_by_borough(df, borough)
 
-    return jsonify(df.to_dict(orient="records"))
+#     if bbox:
+#         gdf = make_geodf_from_crash_data(df)
+#         gdf = filter_by_bbox_coords(gdf, bbox)
+#         df = pd.DataFrame(gdf.drop(columns="geometry"))
 
+#     return jsonify(df.to_dict(orient="records"))
+@app.route('/api/crashes')
+def get_crashes():
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT crash_date, borough, latitude, longitude,
+                   number_of_persons_injured, contributing_factor_vehicle_1
+            FROM crash_data
+            LIMIT 500;
+        """)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        data = [
+            {
+                "crash_date": r[0],
+                "borough": r[1],
+                "latitude": r[2],
+                "longitude": r[3],
+                "number_of_persons_injured": r[4],
+                "contributing_factor_vehicle_1": r[5],
+            }
+            for r in rows
+        ]
+        return jsonify(data)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/predict", methods=["POST"])
 def predict():
@@ -68,29 +102,6 @@ def admin_upload():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/crashes")
-def get_crashes():
-    conn = psycopg2.connect(DATABASE_URL)
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT crash_date, borough, latitude, longitude, number_of_persons_injured, contributing_factor_vehicle_1
-        FROM crash_data
-        LIMIT 500;
-    """)
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-    return jsonify([
-        {
-            "crash_date": row[0],
-            "borough": row[1],
-            "latitude": row[2],
-            "longitude": row[3],
-            "number_of_persons_injured": row[4],
-            "contributing_factor_vehicle_1": row[5]
-        }
-        for row in rows
-    ])
 
 
 @app.route("/api/crashes/bbox")

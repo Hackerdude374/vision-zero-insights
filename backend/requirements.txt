@@ -5,3 +5,4 @@ geopandas
 scikit-learn
 gunicorn
 flask-cors
+python-dotenv
