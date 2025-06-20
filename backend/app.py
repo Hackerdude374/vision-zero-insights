@@ -68,6 +68,31 @@ def admin_upload():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/crashes")
+def get_crashes():
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT crash_date, borough, latitude, longitude, number_of_persons_injured, contributing_factor_vehicle_1
+        FROM crash_data
+        LIMIT 500;
+    """)
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return jsonify([
+        {
+            "crash_date": row[0],
+            "borough": row[1],
+            "latitude": row[2],
+            "longitude": row[3],
+            "number_of_persons_injured": row[4],
+            "contributing_factor_vehicle_1": row[5]
+        }
+        for row in rows
+    ])
+
+
 @app.route("/api/crashes/bbox")
 def crashes_bbox():
     args = request.args
