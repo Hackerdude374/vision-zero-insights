@@ -8,7 +8,8 @@ from werkzeug.exceptions import Forbidden
 import csv
 import psycopg2
 import os
-
+from dotenv import load_dotenv
+load_dotenv()
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
@@ -75,8 +76,11 @@ def predict():
 def admin_upload():
     # For security: simple token check
     token = request.args.get("token")
+    print("Backend token:", os.getenv("ADMIN_TOKEN"))
+    print("Request token:", token)
     if token != os.getenv("ADMIN_TOKEN"):
-        raise Forbidden("Invalid token")
+        return jsonify({"error": "Forbidden"}), 403
+    #raise Forbidden("Invalid token")
 
     try:
         with open("crash_data_cleaned.csv", "r") as f:

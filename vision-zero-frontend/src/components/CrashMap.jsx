@@ -9,29 +9,38 @@ export default function CrashMap() {
   const mapRef = useRef(null);
 
   useEffect(() => {
+    if (!mapRef.current) return;
+  
     const map = new mapboxgl.Map({
       container: mapRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
       center: [-73.935242, 40.73061],
       zoom: 10,
     });
-
-    fetchCrashData()
-      .then(data => {
-        console.log("Data:", data);
-        data.forEach(d => {
-          if (d.longitude && d.latitude) {
-            new mapboxgl.Marker()
-              .setLngLat([d.longitude, d.latitude])
-              .setPopup(new mapboxgl.Popup().setText(`${d.borough}: ${d.contributing_factor_vehicle_1}`))
-              .addTo(map);
-          }
-        });
-      })
-      .catch(console.error);
-
+  
+    map.on("load", () => {
+      fetchCrashData()
+        .then((data) => {
+          console.log("Data:", data);
+          data.forEach((d) => {
+            if (d.longitude && d.latitude) {
+              new mapboxgl.Marker()
+                .setLngLat([d.longitude, d.latitude])
+                .setPopup(
+                  new mapboxgl.Popup().setText(
+                    `${d.borough}: ${d.contributing_factor_vehicle_1}`
+                  )
+                )
+                .addTo(map);
+            }
+          });
+        })
+        .catch(console.error);
+    });
+  
     return () => map.remove();
   }, []);
+  
 
   return <div ref={mapRef} className="w-full h-[calc(100vh-64px)]" />;
 }
