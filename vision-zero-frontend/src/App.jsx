@@ -11,16 +11,17 @@ function App() {
   }
 
   const handleRefresh = async () => {
-    try {
-      const res = await fetch(`/api/admin/upload?token=${import.meta.env.VITE_ADMIN_TOKEN}`, {
-        method: "POST"
-      })
-      const data = await res.json()
-      alert(`✅ Refreshed: ${data.status || data.message}`)
-    } catch (err) {
-      alert("❌ Refresh failed")
-      console.error(err)
-    }
+    // try {
+    //   const res = await fetch(`/api/admin/upload?token=${import.meta.env.VITE_ADMIN_TOKEN}`, {
+    //     method: "POST"
+    //   })
+    //   const data = await res.json()
+    //   alert(`✅ Refreshed: ${data.status || data.message}`)
+    // } catch (err) {
+    //   alert("❌ Refresh failed")
+    //   console.error(err)
+    // }
+    window.reload();
   }
 
   return (

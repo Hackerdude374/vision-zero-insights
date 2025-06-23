@@ -19,7 +19,7 @@ export default function PredictionPanel() {
     setLoading(true)
     setPrediction(null)
     try {
-      const res = await fetch("/api/predict", {
+      const res = await fetch("https://vision-zero-insights.onrender.com/api/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

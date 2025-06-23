@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
 export default function CrashDetailsPanel({ crash, onClose }) {
   const [prediction, setPrediction] = useState(null)
@@ -6,28 +7,42 @@ export default function CrashDetailsPanel({ crash, onClose }) {
 
   useEffect(() => {
     const fetchPrediction = async () => {
-      setLoading(true)
-      try {
-        const res = await fetch("/api/predict", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            crash_date: crash.crash_date,
-            borough: crash.borough,
-            contributing_factor_vehicle_1: crash.contributing_factor_vehicle_1
-          })
-        })
-        const data = await res.json()
-        setPrediction(data.predicted_injuries)
-      } catch (err) {
-        console.error("Prediction error:", err)
-        setPrediction("❌ Failed")
-      }
-      setLoading(false)
-    }
+        setLoading(true);
+        console.log("🔍 Sending to /api/predict:", {
+          crash_date: crash.crash_date,
+          borough: crash.borough,
+          contributing_factor_vehicle_1: crash.contributing_factor_vehicle_1
+        });
+      
+        try {
+          const res = await fetch("https://vision-zero-insights.onrender.com/api/predict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              crash_date: crash.crash_date,
+              borough: crash.borough,
+              contributing_factor_vehicle_1: crash.contributing_factor_vehicle_1
+            })
+          });
+          const data = await res.json();
+          console.log("✅ ML prediction response:", data);
+          setPrediction(data.predicted_injuries);
+        } catch (err) {
+          console.error("❌ Prediction error:", err);
+          setPrediction("❌ Failed");
+        }
+      
+        setLoading(false);
+      };
+      
 
     if (crash) fetchPrediction()
   }, [crash])
+
+  const chartData = [
+    { label: "Reported", value: crash.number_of_persons_injured },
+    { label: "Predicted", value: prediction && !isNaN(prediction) ? parseInt(prediction) : 0 }
+  ]
 
   return (
     <div className="absolute right-0 top-0 w-full max-w-md h-full bg-white shadow-lg z-50 overflow-y-auto p-6">
@@ -45,6 +60,23 @@ export default function CrashDetailsPanel({ crash, onClose }) {
         <p>Loading...</p>
       ) : (
         <p className="text-2xl font-bold">{prediction}</p>
+      )}
+
+      {!loading && prediction !== null && (
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold">📊 Injury Stats Breakdown</h3>
+          <div className="mt-2 p-4 border rounded bg-gray-50">
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="label" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8884d8" barSize={40} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       )}
     </div>
   )
