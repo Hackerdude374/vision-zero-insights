@@ -70,7 +70,9 @@ def get_crashes():
 def predict():
     input_data = request.get_json()
     prediction = predict_severity(input_data)
-    return jsonify({"predicted_severity": prediction})
+    return jsonify({
+        "predicted_severity": prediction
+        })
 
 @app.route("/api/admin/upload", methods=["POST"])
 def admin_upload():
