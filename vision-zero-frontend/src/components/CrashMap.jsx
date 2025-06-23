@@ -18,7 +18,7 @@ export default function CrashMap() {
 
     fetchCrashData()
       .then(data => {
-        console.log("Data:", data);  // confirm in devtools console
+        console.log("Data:", data);
         data.forEach(d => {
           if (d.longitude && d.latitude) {
             new mapboxgl.Marker()
@@ -33,5 +33,5 @@ export default function CrashMap() {
     return () => map.remove();
   }, []);
 
-  return <div ref={mapRef} className="w-full h-screen" />;
+  return <div ref={mapRef} className="w-full h-[calc(100vh-64px)]" />;
 }
