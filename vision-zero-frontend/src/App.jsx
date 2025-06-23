@@ -1,14 +1,39 @@
-import Navbar from './components/Navbar'
-import CrashMap from './components/CrashMap'
+import { useState } from "react"
+import Navbar from "./components/Navbar"
+import CrashMap from "./components/CrashMap"
 
-export default function App() {
+function App() {
+  const [showPredict, setShowPredict] = useState(false)
+
+  const handleDownload = () => {
+    window.open("https://data.cityofnewyork.us/api/views/h9gi-nx95/rows.csv?accessType=DOWNLOAD", "_blank")
+  }
+
+  const handleRefresh = async () => {
+    try {
+      const res = await fetch(`/api/admin/upload?token=${import.meta.env.VITE_ADMIN_TOKEN}`, {
+        method: "POST",
+      })
+      const data = await res.json()
+      alert(`✅ Refreshed: ${data.status || data.message}`)
+    } catch (err) {
+      alert("❌ Refresh failed")
+      console.error(err)
+    }
+  }
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <div className="flex-1">
+    <div className="w-full h-screen">
+      <Navbar
+        onDownload={handleDownload}
+        onRefresh={handleRefresh}
+        onTogglePredict={() => setShowPredict(!showPredict)}
+      />
+      <div className="mt-16 h-[calc(100vh-64px)]">
         <CrashMap />
       </div>
     </div>
   )
 }
 
+export default App
