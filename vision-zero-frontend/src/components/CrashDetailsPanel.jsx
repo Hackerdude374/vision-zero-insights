@@ -26,7 +26,8 @@ export default function CrashDetailsPanel({ crash, onClose }) {
           });
           const data = await res.json();
           console.log("✅ ML prediction response:", data);
-          setPrediction(data.predicted_injuries);
+          setPrediction(data.predicted_severity);
+
         } catch (err) {
           console.error("❌ Prediction error:", err);
           setPrediction("❌ Failed");
