@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl"
 import { fetchCrashData } from "../api/crashAPI"
 import 'mapbox-gl/dist/mapbox-gl.css'
 
-mapboxgl.accessToken = "your-mapbox-token"
+mapboxgl.accessToken = "pk.eyJ1IjoiamltYm9qb25lczEyMyIsImEiOiJjbWMyMWF2eXYwM21iMm9wejNwOW12bzBlIn0.BIplMo_WDg0a68Ftg_ccUw"
 
 export default function CrashMap({ onMarkerClick }) {
   const mapRef = useRef(null)
